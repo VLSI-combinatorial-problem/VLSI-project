@@ -1,0 +1,17 @@
+# Organizzazione del lavoro
+
+
+- CP entro 22 notte. 
+
+
+
+## CP Minizinc
+
+- vincolo base (do not overlap)
+- cumulative (bidirezionale)
+- duale
+- lexicographic order
+- search strategy
+- rotazione
+
+## SAT problem 
