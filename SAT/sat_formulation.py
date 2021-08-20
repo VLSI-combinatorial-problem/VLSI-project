@@ -13,8 +13,7 @@ import matplotlib.pyplot as plt
 
 
 class SAT:
-    def __init__(self, data_n, solution):
-        self.solution = solution
+    def __init__(self, data_n):
         self.cells = None
         self.solver = None
         self.prob_num = data_n
@@ -58,8 +57,7 @@ class SAT:
             for x in range(self.w - self.chips_w[k] + 1):
                 for y in range(current_h - self.chips_h[k] + 1):
                     k_constraints.append(self.check_rectangle(x, y, k, current_h))
-            # self.solver.add(self.at_least_one(k_constraints))
-        self.giochino_magico(self.solution)
+            self.solver.add(self.at_least_one(k_constraints))
         return self.solver.check()
 
     def build_world(self, current_h):
@@ -67,8 +65,7 @@ class SAT:
                       range(current_h)]
         for i in range(current_h):
             for j in range(self.w):
-                # self.solver.add(self.at_most_one(self.cells[i][j]))  # no overlap
-                pass
+                self.solver.add(self.at_most_one(self.cells[i][j]))  # no overlap
 
     def at_most_one(self, bool_vars):
         return [Not(And(pair[0], pair[1])) for pair in combinations(bool_vars, 2)]
@@ -104,14 +101,19 @@ class SAT:
         ax.grid(which='major', alpha=0.5)
         plt.show()
 
-    def giochino_magico(self, solution):
-        for i in range(12):
-            for j in range(12):
-                for k in range(8):
-                    if solution[i][j][k]:
-                        self.solver.add(self.cells[i][j][k])
-                    else:
-                        self.solver.add(Not(self.cells[i][j][k]))
+"""
+def giochino_magico(solution):
+    solver = Solver()
+    cells = [[[Bool(f"cell_{i}{j}{k}") for k in range(8)] for j in range(12)] for i in range(12)]
+    for i in range(12):
+        for j in range(12):
+            for k in range(8):
+                if solution[i][j][k]:
+                    solver.add(cells[i][j][k])
+                else:
+                    solver.add(Not(cells[i][j][k]))
+    if solver.check():
+        print("diocane")
 
 
 solution_flatten = [[1, 1, 1, 1, 1, 1, 6, 6, 6, 7, 7, 7],
@@ -132,8 +134,10 @@ for i in range(12):
     for j in range(12):
         solution_3d[i, j, solution_flatten[i][j] - 1] = True
 
+giochino_magico(solution_3d)
+"""
 
 problem_number = 5
-ss = SAT(problem_number, solution_3d)
+ss = SAT(problem_number)
 ss.solve_problem()
 
