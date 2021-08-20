@@ -1,4 +1,4 @@
 w = 10;
 n = 6;
-circuits_w = [3, 3, 3, 3, 4, 4];
-circuits_h = [3, 4, 6, 7, 4, 6];
+circuits_w = [4,4,3,3,3,3];
+circuits_h = [6,4,7,6,4,3];

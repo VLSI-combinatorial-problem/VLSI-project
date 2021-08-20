@@ -1,5 +1,6 @@
 import re
 import copy
+import numpy as np
 
 
 for i in range(1, 41):
@@ -11,11 +12,13 @@ for i in range(1, 41):
     y_data = []
     for l in lines:
         values = l.split(' ')
-        x_data.append(values[0])
-        y_data.append(re.sub(r'\n', '', values[1]))
-    new_lines.append('circuits_w = ' + re.sub(r'\'', '', str(x_data)) + ';')
+        x_data.append(int(values[0]))
+        y_data.append(int(re.sub(r'\n', '', values[1])))
+    sorting_array = (np.vstack((np.array(x_data), np.array(y_data)))).T
+    sorting_array = sorting_array[sorting_array[:, 0].argsort()]
+    new_lines.append('circuits_w = ' + re.sub(r'\'', '', re.sub(r'[ ]+', ',', str(np.flip(sorting_array[:, 0])))) + ';')
     new_lines.append('\n')
-    new_lines.append('circuits_h = ' + re.sub(r'\'', '', str(y_data)) + ';')
+    new_lines.append('circuits_h = ' + re.sub(r'\'', '', re.sub(r'[ ]+', ',', str(np.flip(sorting_array[:, 1])))) + ';')
 
     output = open("../cp_utils/dzn_files/ins_" + str(i) + ".dzn", "w+")
     output.writelines(new_lines)
