@@ -48,10 +48,10 @@ def plot_dual(dual_array, h):
     plt.show()
 
 
-data_num = 37
-h = 60
-x_array = [0, 13, 5, 13, 13, 0, 16, 13, 0, 20, 8, 8, 25, 0, 25, 25, 16, 16, 26, 16, 27, 5, 24, 13, 13, 24, 24, 24]
-y_array = [25, 25, 18, 46, 42, 46, 21, 0, 0, 0, 0, 46, 4, 7, 7, 0, 9, 16, 21, 6, 39, 0, 43, 11, 6, 39, 21, 33]
+data_num = 5
+h = 13
+x_array = [0, 0, 9, 6, 3, 6, 9, 3]
+y_array = [9, 0, 0, 0, 0, 7, 8, 6]
 plot_solution(data_num, x_array, y_array, h)
 
 # plot_dual(data, h)
