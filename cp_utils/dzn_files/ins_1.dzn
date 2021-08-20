@@ -1,4 +1,4 @@
 w = 8;
 n = 4;
-circuits_w = [5,5,3,3];
-circuits_h = [5,3,5,3];
+chips_w = [5,5,3,3];
+chips_h = [5,3,5,3];
