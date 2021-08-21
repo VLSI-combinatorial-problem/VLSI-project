@@ -8,7 +8,7 @@ import re
 from itertools import combinations
 
 import numpy as np
-from z3 import And, Or, Bool, Solver, Not, sat
+from z3 import And, Or, Bool, Solver, Not, sat, Xor, unsat
 import matplotlib.pyplot as plt
 
 
@@ -61,22 +61,28 @@ class SAT:
         return self.solver.check()
 
     def build_world(self, current_h):
-        self.cells = [[[Bool(f"cell_{i}{j}{k}") for k in range(self.n)] for j in range(self.w)] for i in
-                      range(current_h)]
+        self.cells = [[[Bool(f"cell_{i}{j}{k}") for k in range(self.n)]
+                       for j in range(self.w)]
+                      for i in range(current_h)]
+        # no overlap
         for i in range(current_h):
             for j in range(self.w):
-                self.solver.add(self.at_most_one(self.cells[i][j]))  # no overlap
+                self.solver.add(self.at_most_one(self.cells[i][j]))
+
 
     def at_most_one(self, bool_vars):
-        return [Not(And(pair[0], pair[1])) for pair in combinations(bool_vars, 2)]
+        res = []
+        for pair in combinations(bool_vars, 2):
+            res.append(Not(And(pair[0], pair[1])))
+        return res
 
     def at_least_one(self, bool_vars):
         return Or(bool_vars)
 
     def check_rectangle(self, x, y, k, h):
         rectangle = []
-        for i in range(h):
-            for j in range(self.w):
+        for i in range(h):  # rows
+            for j in range(self.w):  # cols
                 if y <= i < y + self.chips_h[k] and x <= j < x + self.chips_w[k]:
                     rectangle.append(self.cells[i][j][k])
                 else:
@@ -100,6 +106,7 @@ class SAT:
         ax.set_yticks(np.arange(0.5, h, 1))
         ax.grid(which='major', alpha=0.5)
         plt.show()
+
 
 """
 def giochino_magico(solution):
@@ -140,4 +147,3 @@ giochino_magico(solution_3d)
 problem_number = 5
 ss = SAT(problem_number)
 ss.solve_problem()
-
