@@ -42,7 +42,7 @@ class SAT:
         return [int(n) for n in line]
 
     def solve_problem(self):
-        for h in range(self.min_h, self.min_h + 1):
+        for h in range(self.min_h, self.max_h):
             self.solver = Solver()
             if self.solve_vlsi_instace(h) == sat:
                 self.display_solution(self.solver.model(), h)
@@ -69,7 +69,6 @@ class SAT:
             for j in range(self.w):
                 self.solver.add(self.at_most_one(self.cells[i][j]))
 
-
     def at_most_one(self, bool_vars):
         res = []
         for pair in combinations(bool_vars, 2):
@@ -81,13 +80,15 @@ class SAT:
 
     def check_rectangle(self, x, y, k, h):
         rectangle = []
+        backgrund = []
         for i in range(h):  # rows
             for j in range(self.w):  # cols
                 if y <= i < y + self.chips_h[k] and x <= j < x + self.chips_w[k]:
                     rectangle.append(self.cells[i][j][k])
                 else:
-                    rectangle.append(Not(self.cells[i][j][k]))
-        return And(rectangle)
+                    backgrund.append(self.cells[i][j][k])
+        constraint = And(And(rectangle), Not(Or(backgrund)))
+        return constraint
 
     def display_solution(self, model, h):
         print("SUCCESS")
@@ -144,6 +145,6 @@ for i in range(12):
 giochino_magico(solution_3d)
 """
 
-problem_number = 5
+problem_number = 6
 ss = SAT(problem_number)
 ss.solve_problem()
