@@ -145,6 +145,6 @@ for i in range(12):
 giochino_magico(solution_3d)
 """
 
-problem_number = 6
+problem_number = 4
 ss = SAT(problem_number)
 ss.solve_problem()

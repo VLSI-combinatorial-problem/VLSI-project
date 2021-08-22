@@ -50,6 +50,7 @@ class SMT:
 
     def display_solution(self, model, h):
         print("SUCCESS")
+        print("h: ", h)
         fig = plt.figure()
         ax = fig.add_subplot(1, 1, 1)
         position_x = [int(model.evaluate(self.x_positions[i]).as_string()) for i in range(self.n)]
@@ -81,7 +82,8 @@ class SMT:
         self.x_positions = [Int(f"x_pos{i}") for i in range(self.n)]
         self.y_positions = [Int(f"y_pos{i}") for i in range(self.n)]
 
-        for h in range(self.min_h, self.min_h + 2):
+        for h in range(self.min_h + 1, self.max_h):
+            print("current h: ", h - 1)
             # SOLVER
             self.solver = Solver()
 
@@ -89,40 +91,15 @@ class SMT:
             self.solver.add([And(0 <= self.x_positions[i], self.x_positions[i] <= self.w - self.chips_w[i])
                              for i in range(self.n)])
 
-            self.solver.add([And(0 <= self.y_positions[i], self.y_positions[i] <= h - self.chips_h[i])
+            self.solver.add([And(0 <= self.y_positions[i], self.y_positions[i] < h - self.chips_h[i])
                              for i in range(self.n)])
 
+            # c2) TIME-RD
+            for u in range(h):
+                self.solver.add(self.w >= Sum([If(And(self.y_positions[i] <= u, u < self.y_positions[i] + self.chips_h[i]),
+                        self.chips_w[i], 0) for i in range(self.n)]))
 
-            # Ale solution
-            '''active_chip = [[Int(f"is_present") for _ in range(self.n)] for _ in range(h)] #  shape == (h, n)
-            self.solver.add(
-                [Xor(active_chip[i][j] == 1, active_chip[i][j] == 0) for i in range(h) for j in range(self.n)])
-
-            for i in range(h):
-                for j in range(self.n):
-                    self.solver.add(If(And(self.y_positions[j] <= i, i < self.y_positions[j] + self.chips_h[j]),
-                                            active_chip[i][j] == 1, active_chip[i][j] == 0))
-
-            for i in range(h):
-                self.solver.add(Sum([self.chips_w[j] * active_chip[i][j] for j in range(self.n)]) <= self.w)'''
-
-            # general solution timerd
-            ''''u = Int('u')
-            self.solver.add(u >= 0, u < self.n)
-            self.solver.add(ForAll(u, self.w >= Sum([If(And(self.y_positions[i] <= u, u < self.y_positions[i] + self.chips_h[i]),
-                                           self.chips_w[i], 0) for i in range(self.n)])))'''
-
-            # CUMULATIVE TASK-RD
-            for ref_chip in range(self.n):
-                concurrent_chips = [self.chips_w[ref_chip]]
-                for different_chip in range(self.n):
-                    if ref_chip != different_chip:
-                        concurrent_chips.append(If(And([self.y_positions[different_chip] <= self.y_positions[ref_chip],
-                                                        (self.y_positions[different_chip] + self.chips_h[
-                                                            different_chip]) < self.y_positions[ref_chip]]),
-                                                   self.chips_w[different_chip], 0))
-                self.solver.add(Sum(concurrent_chips) <= self.w)
-
+            # c3) DO NOT OVERLAP
             for i in range(1, self.n):
                 for j in range(0, i):
                     self.solver.add(Or(self.y_positions[i] + self.chips_h[i] <= self.y_positions[j],
@@ -130,20 +107,26 @@ class SMT:
                                        self.x_positions[i] + self.chips_w[i] <= self.x_positions[j],
                                        self.x_positions[j] + self.chips_w[j] <= self.x_positions[i]))
 
+            # c4) Implied constraint on h
             self.solver.add(self.max([self.chips_h[i] + self.y_positions[i] for i in range(self.n)]) <= h)
-            self.solver.add(self.max([self.chips_w[i] + self.x_positions[i] for i in range(self.n)]) <= self.w)
+
+            # this constraint would be redundant since it is already satisfied by c2
+            # self.solver.add(self.max([self.chips_w[i] + self.x_positions[i] for i in range(self.n)]) <= self.w)
+
 
             # SOLVER
-
-            if self.solver.check() == sat:
-                print(self.solver.model())
-                self.display_solution(self.solver.model(), h)
+            start = timer()
+            outcome = self.solver.check()
+            time = timer() - start
+            if outcome == sat:
+                print("Solving time: " + str(time))
+                self.display_solution(self.solver.model(), h - 1)
                 return True
-        print("FAILURE")
+            print("FAILURE ", h - 1)
         return False
 
 
 if __name__ == '__main__':
-    problem_number = 3
+    problem_number = 18
     ss = SMT(problem_number)
     ss.solve_problem()
