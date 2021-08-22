@@ -55,11 +55,11 @@ def gather_times(rotation):
 
 
 if __name__ == '__main__':
-    no_rotation = gather_times(rotation=False)
-    rotation = gather_times(rotation=True)
+    # no_rotation = gather_times(rotation=False)
+    # rotation = gather_times(rotation=True)
 
-    # no_rotation = np.loadtxt("results.csv", delimiter=',')
-    # rotation = np.loadtxt("results_rotation.csv", delimiter=',')
+    no_rotation = np.loadtxt("results.csv", delimiter=',')
+    rotation = np.loadtxt("results_rotation.csv", delimiter=',')
 
     full_data = np.vstack((no_rotation, rotation))
     full_data[:, 0] = full_data[:, 0].astype(int)
@@ -74,4 +74,5 @@ if __name__ == '__main__':
     plt.tight_layout()
     ax.set_yscale("symlog")
     ax.set_yticks([0, 1, 10, 100, 200])
+    plt.savefig("../images/cp_plot.png")
     plt.show()
