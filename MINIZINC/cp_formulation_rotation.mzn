@@ -23,13 +23,13 @@ array[CHIPS] of var bool: rotations;
 array[CHIPS] of var 0..max(max(chips_w), max(chips_h)): chips_w_true;  % chips coordinates x (var)
 array[CHIPS] of var 0..max(max(chips_w), max(chips_h)): chips_h_true;  % chips coordinates y (var)
 
-%%% Base Contraints
+%%% Rotation Contraint
 
 constraint forall(i in CHIPS)
 ((rotations[i] /\ chips_w_true[i] == chips_h[i] /\ chips_h_true[i] == chips_w[i]) 
 xor (not(rotations[i]) /\ chips_w_true[i] == chips_w[i] /\ chips_h_true[i] == chips_h[i]));
 
-%%%%
+%%% Base Contraints
 
 constraint cumulative(y_positions, chips_h_true, chips_w_true, w); % Cumulative task fixed w
 

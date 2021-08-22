@@ -57,27 +57,24 @@ class SMT:
         ax = fig.add_subplot(1, 1, 1)
         position_x = [int(model.evaluate(self.x_positions[i]).as_string()) for i in range(self.n)]
         position_y = [int(model.evaluate(self.y_positions[i]).as_string()) for i in range(self.n)]
+        line_width = 2
         for i in range(self.n):
-            plt.plot((position_x[i], position_x[i] + self.chips_w[i]), (position_y[i], position_y[i]), color='orange')
+            plt.plot((position_x[i], position_x[i] + self.chips_w[i]),
+                     (position_y[i], position_y[i]),
+                     color='orange', linewidth=line_width)
             plt.plot((position_x[i] + self.chips_w[i], position_x[i] + self.chips_w[i]),
                      (position_y[i], position_y[i] + self.chips_h[i]),
-                     color='orange')
+                     color='orange', linewidth=line_width)
             plt.plot((position_x[i], position_x[i] + self.chips_w[i]),
                      (position_y[i] + self.chips_h[i], position_y[i] + self.chips_h[i]),
-                     color='orange')
-            plt.plot((position_x[i], position_x[i]), (position_y[i], position_y[i] + self.chips_h[i]), color='orange')
+                     color='orange', linewidth=line_width)
+            plt.plot((position_x[i], position_x[i]), (position_y[i], position_y[i] + self.chips_h[i]),
+                     color='orange', linewidth=line_width)
         plt.scatter(position_x, position_y, zorder=10)
         ax.set_xticks(np.arange(0, self.w + 1, 1))
         ax.set_yticks(np.arange(0, h + 1, 1))
         ax.grid(which='major', alpha=0.5)
         plt.show()
-
-    # Return maximum of a vector; error if empty
-    def max(self, vs):
-        m = vs[0]
-        for v in vs[1:]:
-            m = If(v > m, v, m)
-        return m
 
     def solve_problem(self):
         # VARIABLES
@@ -98,7 +95,7 @@ class SMT:
             self.solver.add([And(0 <= self.y_positions[i], self.y_positions[i] < h - self.chips_h[i])
                              for i in range(self.n)])
 
-            # c2) TIME-RD
+            # c2) SUM OVER ROWS
             for u in range(h):
                 self.solver.add(self.w >= Sum([If(And(self.y_positions[i] <= u, u < self.y_positions[i] + self.chips_h[i]),
                         self.chips_w[i], 0) for i in range(self.n)]))
@@ -111,8 +108,10 @@ class SMT:
                                        self.x_positions[i] + self.chips_w[i] <= self.x_positions[j],
                                        self.x_positions[j] + self.chips_w[j] <= self.x_positions[i]))
 
-            # c4) Implied constraint on h
-            self.solver.add(self.max([self.chips_h[i] + self.y_positions[i] for i in range(self.n)]) <= h)
+            # c4) SUM OVER COLUMNS
+            for u in range(self.w):
+                self.solver.add(h >= Sum([If(And(self.x_positions[i] <= u, u < self.x_positions[i] + self.chips_w[i]),
+                                             self.chips_h[i], 0) for i in range(self.n)]))
 
             # this constraint would be redundant since it is already satisfied by c2
             # self.solver.add(self.max([self.chips_w[i] + self.x_positions[i] for i in range(self.n)]) <= self.w)
@@ -131,6 +130,6 @@ class SMT:
 
 
 if __name__ == '__main__':
-    problem_number = 18
+    problem_number = 33
     ss = SMT(problem_number)
     ss.solve_problem()
