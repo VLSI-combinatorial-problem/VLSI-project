@@ -58,8 +58,8 @@ if __name__ == '__main__':
     # no_rotation = gather_times(rotation=False)
     # rotation = gather_times(rotation=True)
 
-    no_rotation = np.loadtxt("results.csv", delimiter=',')
-    rotation = np.loadtxt("results_rotation.csv", delimiter=',')
+    no_rotation = np.loadtxt("results.csv", delimiter=',', dtype=str)
+    rotation = np.loadtxt("results_rotation.csv", delimiter=',', dtype=str)
 
     full_data = np.vstack((no_rotation, rotation))
     full_data[:, 0] = full_data[:, 0].astype(int)
@@ -69,6 +69,7 @@ if __name__ == '__main__':
     full_data_df["instance"] = pd.to_numeric(full_data_df["instance"], downcast='signed')
     full_data_df["seconds"] = pd.to_numeric(full_data_df["seconds"], downcast="float")
 
+    fig = plt.figure(figsize=(11, 5))
     sns.set_theme(style="whitegrid")
     ax = sns.barplot(x="instance", y="seconds", hue="rotation", data=full_data_df)
     plt.tight_layout()
