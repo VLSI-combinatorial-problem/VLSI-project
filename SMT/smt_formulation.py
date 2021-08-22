@@ -1,5 +1,7 @@
 import re
 from itertools import combinations
+from timeit import default_timer as timer
+
 
 import numpy as np
 from z3 import And, Or, Bool, Int, Solver, Not, sat, Xor, unsat, If, ForAll, Implies, Sum
@@ -88,6 +90,8 @@ class SMT:
             self.solver = Solver()
 
             # CONSTRAINTS
+
+            # c1) NOT EXCEED, DOMAINS
             self.solver.add([And(0 <= self.x_positions[i], self.x_positions[i] <= self.w - self.chips_w[i])
                              for i in range(self.n)])
 
