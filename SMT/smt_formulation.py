@@ -1,10 +1,8 @@
 import re
-from itertools import combinations
 from timeit import default_timer as timer
 
-
 import numpy as np
-from z3 import And, Or, Bool, Int, Solver, Not, sat, Xor, unsat, If, ForAll, Implies, Sum
+from z3 import And, Or, Int, Solver, sat, If, Sum
 import matplotlib.pyplot as plt
 
 
@@ -21,17 +19,6 @@ class SMT:
         self.chips_h = None
         self.n = None
         self.load_data()
-
-    @staticmethod
-    def at_most_one(bool_vars):
-        res = []
-        for pair in combinations(bool_vars, 2):
-            res.append(Not(And(pair[0], pair[1])))
-        return res
-
-    @staticmethod
-    def at_least_one(bool_vars):
-        return Or(bool_vars)
 
     @staticmethod
     def grab_data(line):
@@ -71,6 +58,8 @@ class SMT:
             plt.plot((position_x[i], position_x[i]), (position_y[i], position_y[i] + self.chips_h[i]),
                      color='orange', linewidth=line_width)
         plt.scatter(position_x, position_y, zorder=10)
+        plt.axis('scaled')
+        plt.tight_layout()
         ax.set_xticks(np.arange(0, self.w + 1, 1))
         ax.set_yticks(np.arange(0, h + 1, 1))
         ax.grid(which='major', alpha=0.5)
@@ -97,8 +86,9 @@ class SMT:
 
             # c2) SUM OVER ROWS
             for u in range(h):
-                self.solver.add(self.w >= Sum([If(And(self.y_positions[i] <= u, u < self.y_positions[i] + self.chips_h[i]),
-                        self.chips_w[i], 0) for i in range(self.n)]))
+                self.solver.add(
+                    self.w >= Sum([If(And(self.y_positions[i] <= u, u < self.y_positions[i] + self.chips_h[i]),
+                                      self.chips_w[i], 0) for i in range(self.n)]))
 
             # c3) DO NOT OVERLAP
             for i in range(1, self.n):
@@ -114,8 +104,8 @@ class SMT:
                                              self.chips_h[i], 0) for i in range(self.n)]))
 
             # this constraint would be redundant since it is already satisfied by c2
-            # self.solver.add(self.max([self.chips_w[i] + self.x_positions[i] for i in range(self.n)]) <= self.w)
-
+            # self.solver.add([self.chips_h[i] + self.y_positions[i] <= h for i in range(self.n)])
+            # self.solver.add([self.chips_w[i] + self.x_positions[i] <= self.w for i in range(self.n)])
 
             # SOLVER
             start = timer()
