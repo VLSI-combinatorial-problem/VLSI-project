@@ -1,6 +1,11 @@
 from datetime import timedelta
 from timeit import default_timer as timer
 from minizinc import Solver, Instance, Model
+import matplotlib.pyplot as plt
+import seaborn as sns
+import pandas as pd
+import numpy as np
+import re
 
 
 def grab_data(line):
