@@ -35,54 +35,16 @@ class SAT:
         line = line.split(',')
         return [int(n) for n in line]
 
-    def solve_problem(self):
-        for h in range(self.min_h, self.max_h):
-            self.solver = Solver()
-            if self.solve_vlsi_instace(h) == sat:
-                self.display_solution(self.solver.model(), h)
-                return True
-        print("FAILURE")
-        return False
-
-    def solve_vlsi_instace(self, current_h):
-        self.build_world(current_h)
-        for k in range(self.n):
-            k_constraints = []
-            for x in range(self.w - self.chips_w[k] + 1):
-                for y in range(current_h - self.chips_h[k] + 1):
-                    k_constraints.append(self.check_rectangle(x, y, k, current_h))
-            self.solver.add(self.at_least_one(k_constraints))
-        return self.solver.check()
-
-    def build_world(self, current_h):
-        self.cells = [[[Bool(f"cell_{i}{j}{k}") for k in range(self.n)]
-                       for j in range(self.w)]
-                      for i in range(current_h)]
-        # no overlap
-        for i in range(current_h):
-            for j in range(self.w):
-                self.solver.add(self.at_most_one(self.cells[i][j]))
-
-    def at_most_one(self, bool_vars):
+    @staticmethod
+    def at_most_one(bool_vars):
         res = []
         for pair in combinations(bool_vars, 2):
             res.append(Not(And(pair[0], pair[1])))
         return res
 
-    def at_least_one(self, bool_vars):
+    @staticmethod
+    def at_least_one(bool_vars):
         return Or(bool_vars)
-
-    def check_rectangle(self, x, y, k, h):
-        rectangle = []
-        backgrund = []
-        for i in range(h):  # rows
-            for j in range(self.w):  # cols
-                if y <= i < y + self.chips_h[k] and x <= j < x + self.chips_w[k]:
-                    rectangle.append(self.cells[i][j][k])
-                else:
-                    backgrund.append(self.cells[i][j][k])
-        constraint = And(And(rectangle), Not(Or(backgrund)))
-        return constraint
 
     def display_solution(self, model, h):
         print("SUCCESS")
@@ -97,48 +59,58 @@ class SAT:
         print(grid)
         fig = plt.figure()
         ax = fig.add_subplot(1, 1, 1)
-        plt.imshow(grid, cmap='tab20c')
-        ax.set_xticks(np.arange(0.5, self.w, 1))
-        ax.set_yticks(np.arange(0.5, h, 1))
+        plt.imshow(grid, cmap='tab20c', extent=(0, self.w, 0, h))
+        ax.set_xticks(range(self.w + 1))
+        ax.set_yticks(range(h + 1))
         ax.grid(which='major', alpha=0.5)
+        plt.xlabel("x coordinates")
+        plt.ylabel("y coordinates")
+        plt.tight_layout()
         plt.show()
 
+    def solve_problem(self):
+        for h in range(self.min_h, self.max_h):
+            # VARIABLES
+            self.cells = [[[Bool(f"cell{i}{j}{k}") for k in range(self.n)] for j in range(self.w)] for i in range(h)]
+            print("current h: ", h)
+            # SOLVER
+            self.solver = Solver()
 
-"""
-def giochino_magico(solution):
-    solver = Solver()
-    cells = [[[Bool(f"cell_{i}{j}{k}") for k in range(8)] for j in range(12)] for i in range(12)]
-    for i in range(12):
-        for j in range(12):
-            for k in range(8):
-                if solution[i][j][k]:
-                    solver.add(cells[i][j][k])
-                else:
-                    solver.add(Not(cells[i][j][k]))
-    if solver.check():
-        print("diocane")
+            # CONSTRAINTS
+            # c1) DO NOT OVERLAP
+            for i in range(h):
+                for j in range(self.w):
+                    self.solver.add(self.at_most_one(self.cells[i][j][:]))
 
+            # C2) CHIPS CONSISTENCY
+            # loop over levels
+            for k in range(self.n):
+                possible_plates = []
+                for x in range(self.w - self.chips_w[k] + 1):
+                    for y in range(h - self.chips_h[k] + 1):
+                        rectangle = []
+                        background = []
+                        for i in range(h):  # rows
+                            for j in range(self.w):  # cols
+                                if y <= i < y + self.chips_h[k] and x <= j < x + self.chips_w[k]:
+                                    rectangle.append(self.cells[i][j][k])
+                                else:
+                                    background.append(Not(self.cells[i][j][k]))
+                        possible_plates.append(And(And(rectangle), And(background)))
+                self.solver.add(self.at_least_one(possible_plates))
+                self.solver.add(self.at_most_one(possible_plates))
 
-solution_flatten = [[1, 1, 1, 1, 1, 1, 6, 6, 6, 7, 7, 7],
-                    [1, 1, 1, 1, 1, 1, 6, 6, 6, 7, 7, 7],
-                    [1, 1, 1, 1, 1, 1, 6, 6, 6, 7, 7, 7],
-                    [2, 2, 2, 8, 8, 8, 6, 6, 6, 3, 3, 3],
-                    [2, 2, 2, 8, 8, 8, 6, 6, 6, 3, 3, 3],
-                    [2, 2, 2, 8, 8, 8, 4, 4, 4, 3, 3, 3],
-                    [2, 2, 2, 5, 5, 5, 4, 4, 4, 3, 3, 3],
-                    [2, 2, 2, 5, 5, 5, 4, 4, 4, 3, 3, 3],
-                    [2, 2, 2, 5, 5, 5, 4, 4, 4, 3, 3, 3],
-                    [2, 2, 2, 5, 5, 5, 4, 4, 4, 3, 3, 3],
-                    [2, 2, 2, 5, 5, 5, 4, 4, 4, 3, 3, 3],
-                    [2, 2, 2, 5, 5, 5, 4, 4, 4, 3, 3, 3]]
+            # RESOLUTION
+            start = timer()
+            outcome = self.solver.check()
+            time = timer() - start
+            if outcome == sat:
+                print("Solving time: " + str(time))
+                self.display_solution(self.solver.model(), h)
+                return True
+            print("FAILURE")
+        return False
 
-solution_3d = np.full((12, 12, 8), fill_value=False)
-for i in range(12):
-    for j in range(12):
-        solution_3d[i, j, solution_flatten[i][j] - 1] = True
-
-giochino_magico(solution_3d)
-"""
 
 problem_number = 3
 ss = SAT(problem_number)
