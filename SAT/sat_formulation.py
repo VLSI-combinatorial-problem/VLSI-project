@@ -1,12 +1,6 @@
-"""
-
-DO NOT OVERLAP -> only one True for each column array
-
-
-"""
 import re
 from itertools import combinations
-
+from timeit import default_timer as timer
 import numpy as np
 from z3 import And, Or, Bool, Solver, Not, sat, Xor, unsat
 import matplotlib.pyplot as plt
@@ -97,9 +91,10 @@ class SAT:
         for i in range(h):
             for j in range(self.w):
                 for k in range(self.n):
-                    if model.evaluate(self.cells[i][j][k]):
+                    if model[self.cells[i][j][k]]:
                         grid[i, j] = k + 1
                         break
+        print(grid)
         fig = plt.figure()
         ax = fig.add_subplot(1, 1, 1)
         plt.imshow(grid, cmap='tab20c')
@@ -145,6 +140,6 @@ for i in range(12):
 giochino_magico(solution_3d)
 """
 
-problem_number = 4
+problem_number = 3
 ss = SAT(problem_number)
 ss.solve_problem()
