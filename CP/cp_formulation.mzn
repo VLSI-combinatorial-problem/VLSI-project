@@ -37,21 +37,6 @@ constraint max(i in CHIPS)(chips_w[i] + x_positions[i]) <= w; % Respect device w
 % IMPLIED
 %constraint forall(u in 0..w-min(chips_w))(sum(i in CHIPS)(if (x_positions[i]<= u /\ x_positions[i] + chips_w[i] > u) then chips_h[i] else 0 endif) <= h);
 
-%%% Dual model
-
-%array[1..max_h, 1..w] of var 0..n: dual;
-
-%constraint symmetry_breaking_constraint(
-%    % Channeling constraint
-%    forall(i in 1..max_h, j in 1..w, k in CHIPS)((dual[i, j] = k) <-> (
-%    positions[k, 2] + chips_h[k] >= i 
-%    /\ positions[k, 2] < i 
-%    /\ positions[k, 1] + chips_w[k] >= j 
-%    /\ positions[k, 1] < j))
-%    % Lexicographic symmetry breaking constraints
-%    /\ lex_lesseq([dual[i, j] | i in 1..max_h, j in reverse(1..w)], [dual[i, j] | i in 1..max_h, j in 1..w])
-%);
-
 %constraint symmetry_breaking_constraint(
 %  lex_lesseq([x_positions[k] | k in CHIPS], [w - x_positions[k] - chips_w[k] | k in CHIPS])
 %);
