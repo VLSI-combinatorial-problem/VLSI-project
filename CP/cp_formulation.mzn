@@ -22,6 +22,7 @@ array[CHIPS] of var 0..max_h - min(chips_h): y_positions;  % chips coordinates y
 %%% Base Contraints
 
 constraint cumulative(y_positions, chips_h, chips_w, w); % Cumulative task fixed w
+
 %constraint forall(i in 2..n, j in 1..i-1)(
 %y_positions[i] + chips_h[i] <= y_positions[j] 
 %\/ y_positions[j] + chips_h[j] <= y_positions[i] 
@@ -32,6 +33,9 @@ constraint diffn_nonstrict(x_positions, y_positions, chips_w, chips_h);
 
 constraint max(i in CHIPS)(chips_h[i] + y_positions[i]) <= h; % Respect device heigth
 constraint max(i in CHIPS)(chips_w[i] + x_positions[i]) <= w; % Respect device width
+
+% IMPLIED
+%constraint forall(u in 0..w-min(chips_w))(sum(i in CHIPS)(if (x_positions[i]<= u /\ x_positions[i] + chips_w[i] > u) then chips_h[i] else 0 endif) <= h);
 
 %%% Dual model
 

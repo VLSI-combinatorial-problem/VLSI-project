@@ -28,7 +28,7 @@ class SMT:
         return [int(n) for n in line]
 
     def load_data(self):
-        f = open("../cp_utils/dzn_files/ins_" + str(self.prob_num) + ".dzn", "r")
+        f = open("../utils/dzn_files/ins_" + str(self.prob_num) + ".dzn", "r")
         lines = f.readlines()
         self.w = int(re.findall(r'\d+', lines[0])[0])
         self.chips_w = self.grab_data(lines[2])
@@ -69,12 +69,12 @@ class SMT:
         # VARIABLES
         self.x_positions = [Int(f"x_pos{i}") for i in range(self.n)]
         self.y_positions = [Int(f"y_pos{i}") for i in range(self.n)]
+        # SOLVER
+        self.solver = Solver()
+        self.solver.set('timeout', 240000)
 
-        for h in range(self.min_h + 1, self.max_h):
+        for h in range(self.min_h + 1, self.min_h + 2):
             print("current h: ", h - 1)
-            # SOLVER
-            self.solver = Solver()
-
             # CONSTRAINTS
 
             # c1) NOT EXCEED, DOMAINS
@@ -113,13 +113,12 @@ class SMT:
             time = timer() - start
             if outcome == sat:
                 print("Solving time: " + str(time))
-                self.display_solution(self.solver.model(), h - 1)
-                return True
+                # self.display_solution(self.solver.model(), h - 1)
+                return time
             print("FAILURE ", h - 1)
-        return False
+        return 241
 
-
-if __name__ == '__main__':
-    problem_number = 33
+def main(problem_number):
     ss = SMT(problem_number)
-    ss.solve_problem()
+    solve_time = ss.solve_problem()
+    return solve_time

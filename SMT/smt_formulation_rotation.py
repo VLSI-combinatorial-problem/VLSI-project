@@ -31,7 +31,7 @@ class SMT:
         return [int(n) for n in line]
 
     def load_data(self):
-        f = open("../cp_utils/dzn_files/ins_" + str(self.prob_num) + ".dzn", "r")
+        f = open("../utils/dzn_files/ins_" + str(self.prob_num) + ".dzn", "r")
         lines = f.readlines()
         self.w = int(re.findall(r'\d+', lines[0])[0])
         self.chips_w = self.grab_data(lines[2])
@@ -81,11 +81,11 @@ class SMT:
         self.chips_h_true = [Int(f"chips_h_true{i}") for i in range(self.n)]
         self.chips_w_true = [Int(f"chips_w_true{i}") for i in range(self.n)]
 
-        for h in range(self.min_h + 1, self.max_h):
-            print("current h: ", h - 1)
-            # SOLVER
-            self.solver = Solver()
+        self.solver = Solver()
+        self.solver.set('timeout', 240000)
 
+        for h in range(self.min_h + 1, self.min_h + 2):
+            print("current h: ", h - 1)
             # CONSTRAINTS
 
             # c0) ROTATION
@@ -121,8 +121,9 @@ class SMT:
 
             # c4) SUM OVER COLUMNS
             for u in range(self.w):
-                self.solver.add(h >= Sum([If(And(self.x_positions[i] <= u, u < self.x_positions[i] + self.chips_w_true[i]),
-                                             self.chips_h_true[i], 0) for i in range(self.n)]))
+                self.solver.add(
+                    h >= Sum([If(And(self.x_positions[i] <= u, u < self.x_positions[i] + self.chips_w_true[i]),
+                                 self.chips_h_true[i], 0) for i in range(self.n)]))
 
             # this constraint would be redundant since it is already satisfied by c2
             # self.solver.add([self.chips_h_true[i] + self.y_positions[i] <= h for i in range(self.n)])
@@ -134,13 +135,13 @@ class SMT:
             time = timer() - start
             if outcome == sat:
                 print("Solving time: " + str(time))
-                self.display_solution(self.solver.model(), h - 1)
-                return True
+                # self.display_solution(self.solver.model(), h - 1)
+                return time
             print("FAILURE ", h - 1)
-        return False
+        return 241
 
 
-if __name__ == '__main__':
-    problem_number = 33
+def main(problem_number):
     ss = SMT(problem_number)
-    ss.solve_problem()
+    solve_time = ss.solve_problem()
+    return solve_time
