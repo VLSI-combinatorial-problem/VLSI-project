@@ -27,7 +27,7 @@ class SAT:
         self.chips_h = self.grab_data(lines[3])
         self.n = len(self.chips_h)
         self.min_h = sum([self.chips_w[k] * self.chips_h[k] for k in range(self.n)]) // self.w
-        self.max_h = sum(self.chips_h) - max(self.chips_h)
+        self.max_h = sum(self.chips_h)
 
     def grab_data(self, line):
         line = line.split('[')[1]

@@ -4,14 +4,14 @@ include "cumulative.mzn";
 include "lex_lesseq.mzn";
 include "diffn.mzn";
 
-
+\ref{eq:4})
 int: w;  % maximum width (param)
 int: n;  % number of chips (param)
 set of int: CHIPS = 1..n;  % macro for range 1 to n
 array[CHIPS] of int: chips_w;  % chips' widths (param)
 array[CHIPS] of int: chips_h;  % chips' heigth (param)
 
-int: max_h = sum(chips_h) - max(chips_h);  % device length upper bound
+int: max_h = sum(chips_h);  % device length upper bound
 int: chips_total_area = sum(k in CHIPS)(chips_w[k] * chips_h[k]);
 int: min_h = chips_total_area div w;  % device length lower bound
 
