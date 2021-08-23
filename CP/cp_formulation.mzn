@@ -4,7 +4,7 @@ include "cumulative.mzn";
 include "lex_lesseq.mzn";
 include "diffn.mzn";
 
-\ref{eq:4})
+
 int: w;  % maximum width (param)
 int: n;  % number of chips (param)
 set of int: CHIPS = 1..n;  % macro for range 1 to n
