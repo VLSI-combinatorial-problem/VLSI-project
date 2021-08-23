@@ -125,7 +125,7 @@ class SMT:
                     h >= Sum([If(And(self.x_positions[i] <= u, u < self.x_positions[i] + self.chips_w_true[i]),
                                  self.chips_h_true[i], 0) for i in range(self.n)]))
 
-            # this constraint would be redundant since it is already satisfied by c2
+            # this constraint would be redundant since it is already satisfied by c1
             # self.solver.add([self.chips_h_true[i] + self.y_positions[i] <= h for i in range(self.n)])
             # self.solver.add([self.chips_w_true[i] + self.x_positions[i] <= self.w for i in range(self.n)])
 
