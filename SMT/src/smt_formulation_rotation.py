@@ -21,6 +21,7 @@ class SMT:
         self.chips_w_true = None
         self.chips_h_true = None
         self.n = None
+        self.h = None
         self.load_data()
 
     @staticmethod
@@ -136,6 +137,7 @@ class SMT:
             if outcome == sat:
                 print("Solving time: " + str(time))
                 # self.display_solution(self.solver.model(), h - 1)
+                self.h = h
                 return time
             print("FAILURE ", h - 1)
         return 241
@@ -144,4 +146,7 @@ class SMT:
 def main(problem_number):
     ss = SMT(problem_number)
     solve_time = ss.solve_problem()
-    return solve_time
+    position_x = [int(ss.solver.model().evaluate(ss.x_positions[i]).as_string()) for i in range(ss.n)]
+    position_y = [int(ss.solver.model().evaluate(ss.y_positions[i]).as_string()) for i in range(ss.n)]
+    rotations = [ss.solver.model()[ss.rotations[i]] for i in range(len(ss.rotations))]
+    return solve_time, ss.chips_w, ss.chips_h, position_x, position_y, ss.n, ss.w, ss.h, rotations

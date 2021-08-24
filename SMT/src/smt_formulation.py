@@ -116,12 +116,16 @@ class SMT:
                 self.display_solution(self.solver.model(), h - 1)
                 return time
             print("FAILURE ", h - 1)
-        return 241
+        return 301
 
-def main(problem_number):
+
+def main(problem_number, ):
     ss = SMT(problem_number)
     solve_time = ss.solve_problem()
-    return solve_time
+    position_x = [int(ss.solver.model().evaluate(ss.x_positions[i]).as_string()) for i in range(ss.n)]
+    position_y = [int(ss.solver.model().evaluate(ss.y_positions[i]).as_string()) for i in range(ss.n)]
+    return solve_time, ss.chips_w, ss.chips_h, position_x, position_y, ss.n, ss.w, ss.h
+
 
 if __name__ == '__main__':
     main(10)
