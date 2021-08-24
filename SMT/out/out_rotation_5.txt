@@ -1,10 +1,10 @@
 12 13
 8
-6 3 0 9 not_rotated
-3 9 3 6 rotated
-3 8 4 3 rotated
-3 7 0 0 rotated
-3 6 6 9 rotated
-3 5 7 0 rotated
-3 4 0 3 rotated
-3 3 0 6 not_rotated
+6 3 3 9 not_rotated
+3 9 6 0 not_rotated
+3 8 0 4 not_rotated
+3 7 9 0 not_rotated
+3 6 3 0 not_rotated
+3 5 9 7 not_rotated
+3 4 0 0 not_rotated
+3 3 3 6 rotated
