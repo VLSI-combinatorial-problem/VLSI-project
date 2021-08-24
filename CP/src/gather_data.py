@@ -30,7 +30,7 @@ def load_data(prob_num):
 
 def gather_times(rotation, start_inst, end_inst, save_times=False, verbose=False):
     if save_times:
-        assert end_inst - start_inst == 40, "Saving allowed only on all instances"
+        assert end_inst - start_inst == 39, "Saving allowed only on all instances"
         times = np.full((40, 3), fill_value='', dtype=object)
 
     for prob_num in range(start_inst, end_inst + 1):
