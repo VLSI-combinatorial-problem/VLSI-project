@@ -45,19 +45,19 @@ directories, which provide README files: [CP](/CP/README.md) and [SMT](/SMT/READ
 CP model performance on 40 VLSI instances:  
 
 <p align='center'>
-  <img src="../utils/images/cp_plot.png" />
+  <img src="/utils/images/cp_plot.png" />
 </p>     
 
 SMT model performance on 40 VLSI instances:
 <p align='center'>
-  <img src="../utils/images/smt_plot.png" />
+  <img src="/utils/images/smt_plot.png" />
 </p>     
 
 The SAT model implementation has also an explicative plot 
 that shows the disposition of the chips (for more details on SAT check the [REPORT]):  
 
 <p align='center'>
-  <img src="../utils/images/parallelepiped.png" />
+  <img src="/utils/images/parallelepiped.png" />
 </p>    
 
 
