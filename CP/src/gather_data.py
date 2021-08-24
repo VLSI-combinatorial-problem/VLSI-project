@@ -73,7 +73,7 @@ def gather_times(rotation, start_inst, end_inst, save_times=False, verbose=False
             print("Solve time: ", round(solve_time, 3))
 
     if save_times:
-        np.savetxt(f"times{'_rotation' if rotation else '_no_rotation'}.csv", times, fmt="%s", delimiter=',')
+        np.savetxt(f"../CP/out/times{'_rotation' if rotation else '_no_rotation'}.csv", times, fmt="%s", delimiter=',')
 
 
 def plot_times():
