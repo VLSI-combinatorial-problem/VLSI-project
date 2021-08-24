@@ -45,7 +45,7 @@ def gather_times(rotation, start_inst, end_inst, save_times=False, verbose=False
         inst["chips_h"] = chips_h
 
         start_time = timer()
-        inst.solve(timeout=timedelta(seconds=241), free_search=True)
+        mznout = inst.solve(timeout=timedelta(seconds=301), free_search=True)
         solve_time = timer() - start_time
 
         x_pos = mznout.solution.x_positions

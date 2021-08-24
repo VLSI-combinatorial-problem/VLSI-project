@@ -7,10 +7,12 @@ import argparse
 import smt_formulation, smt_formulation_rotation
 
 
-def gather_times(rotation):
-    results = np.full((40, 3), fill_value='', dtype=object)
+def gather_times(rotation, start_inst, end_inst, save_times=False, verbose=False):
+    if save_times:
+        assert end_inst - start_inst == 40, "Saving allowed only on all instances"
+        times = np.full((40, 3), fill_value='', dtype=object)
 
-    for prob_num in range(1, 41):
+    for prob_num in range(start_inst, end_inst + 1):
         if rotation:
             solve_time, chips_w, chips_h, position_x, position_y, n, w, h, rotations = smt_formulation_rotation.main(
                 prob_num)
@@ -68,34 +70,17 @@ def plot_times():
 
 
 if __name__ == '__main__':
-    # no_rotation = gather_times(rotation=False)
-    # rotation = gather_times(rotation=True)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-si", "--Start", help="Start Instance number", type=int, default=1)
+    parser.add_argument("-ei", "--End", help="End Instance", type=int, default=40)
+    parser.add_argument("-v", "--Verbose", help="Verbose", type=bool, default=False)
+    parser.add_argument("-s", "--Save", help="Saves Results", type=bool, default=False)
+    parser.add_argument("-p", "--Plot", help="Plot Results", type=bool, default=False)
 
-    no_rotation = np.loadtxt("results.csv", delimiter=',', dtype=str)
-    rotation = np.loadtxt("results_rotation.csv", delimiter=',', dtype=str)
+    args = parser.parse_args()
 
-    full_data = np.vstack((no_rotation, rotation))
-    full_data[:, 0] = np.array(full_data[:, 0], dtype=int)
+    gather_times(rotation=False, start_inst=args.Start, end_inst=args.End, save_times=args.Save, verbose=args.Verbose)
+    gather_times(rotation=True, start_inst=args.Start, end_inst=args.End, save_times=args.Save, verbose=args.Verbose)
 
-    full_data_df = pd.DataFrame(data=full_data,
-                                columns=["instance", "seconds", "rotation"])
-    full_data_df["instance"] = pd.to_numeric(full_data_df["instance"], downcast='signed')
-    full_data_df["seconds"] = pd.to_numeric(full_data_df["seconds"], downcast="float")
-
-    fig = plt.figure(figsize=(11, 5))
-    sns.set_theme(style="whitegrid")
-    ax = sns.barplot(x="instance", y="seconds", hue="rotation", data=full_data_df)
-
-    ch = ax.get_children()
-    bars = [c for c in ch if type(c) is ptc.Rectangle]
-
-    for b in bars:
-        if b._height >= 240:
-            b._alpha = 0.2
-            b._hatch = '/'
-
-    plt.tight_layout()
-    ax.set_yscale("symlog")
-    ax.set_yticks([0, 1, 10, 100, 240])
-    plt.savefig("../utils/images/smt_plot.png")
-    plt.show()
+    if args.Plot:
+        plot_times()

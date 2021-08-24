@@ -18,6 +18,7 @@ class SMT:
         self.chips_w = None
         self.chips_h = None
         self.n = None
+        self.h = None
         self.load_data()
 
     @staticmethod
@@ -28,7 +29,7 @@ class SMT:
         return [int(n) for n in line]
 
     def load_data(self):
-        f = open("../utils/dzn_files/ins_" + str(self.prob_num) + ".dzn", "r")
+        f = open("../SMT/resources/ins_" + str(self.prob_num) + ".dzn", "r")
         lines = f.readlines()
         self.w = int(re.findall(r'\d+', lines[0])[0])
         self.chips_w = self.grab_data(lines[2])
@@ -71,7 +72,7 @@ class SMT:
         self.y_positions = [Int(f"y_pos{i}") for i in range(self.n)]
         # SOLVER
         self.solver = Solver()
-        self.solver.set('timeout', 240000)
+        self.solver.set('timeout', 300000)
 
         for h in range(self.min_h + 1, self.min_h + 2):
             print("current h: ", h - 1)
@@ -113,7 +114,8 @@ class SMT:
             time = timer() - start
             if outcome == sat:
                 print("Solving time: " + str(time))
-                self.display_solution(self.solver.model(), h - 1)
+                # self.display_solution(self.solver.model(), h - 1)
+                self.h = h
                 return time
             print("FAILURE ", h - 1)
         return 301
