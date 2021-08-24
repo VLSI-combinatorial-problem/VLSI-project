@@ -2,7 +2,7 @@ import re
 from itertools import combinations
 from timeit import default_timer as timer
 import numpy as np
-from z3 import And, Or, Bool, Solver, Not, sat, Xor, unsat
+from z3 import And, Or, Bool, Solver, Not, sat, Xor, unsat, If, SolverFor
 import matplotlib.pyplot as plt
 
 
@@ -20,7 +20,7 @@ class SAT:
         self.load_data()
 
     def load_data(self):
-        f = open("../cp_utils/dzn_files/ins_" + str(self.prob_num) + ".dzn", "r")
+        f = open("../utils/dzn_files/ins_" + str(self.prob_num) + ".dzn", "r")
         lines = f.readlines()
         self.w = int(re.findall(r'\d+', lines[0])[0])
         self.chips_w = self.grab_data(lines[2])
@@ -49,6 +49,14 @@ class SAT:
     def display_solution(self, model, h):
         print("SUCCESS")
         print("h: " + str(h))
+
+        parallelepiped = np.zeros((self.n, h, self.w), dtype=bool)
+        for i in range(h):
+            for j in range(self.w):
+                for k in range(self.n):
+                    if model[self.cells[i][j][k]]:
+                        parallelepiped[k, j, i] = True
+
         grid = np.zeros((h, self.w))
         for i in range(h):
             for j in range(self.w):
@@ -68,10 +76,37 @@ class SAT:
         plt.tight_layout()
         plt.show()
 
+        from mpl_toolkits.mplot3d import Axes3D
+
+        axes = [parallelepiped.shape[0], parallelepiped.shape[1], parallelepiped.shape[2]]
+        alpha = 0.9
+        colors = np.empty(axes + [4], dtype=np.float32)
+        colors_not = np.empty(axes + [4], dtype=np.float32)
+        print(colors.shape)
+        colors[4] = [217/255, 217/255, 217/255, alpha]  # red
+        colors[1] = [253/255, 141/255, 60/255, alpha]  # green
+        colors[2] = [161/255, 217/255, 155/255, alpha]  # blue
+        colors[3] = [218/255, 218/255, 235/255, alpha]  # yellow
+        colors[0] = [49/255, 129/255, 188/255, alpha]  # grey
+
+        alpha = 0.3
+        colors_not[4] = [217/255, 217/255, 217/255, alpha]  # red
+        colors_not[1] = [253/255, 141/255, 60/255, alpha]  # green
+        colors_not[2] = [161/255, 217/255, 155/255, alpha]  # blue
+        colors_not[3] = [218/255, 218/255, 235/255, alpha]  # yellow
+        colors_not[0] = [49/255, 129/255, 188/255, alpha]  # grey
+        fig = plt.figure(figsize=(7,7))
+        ax = fig.add_subplot(111, projection='3d')
+        ax.voxels(parallelepiped, facecolors=colors, edgecolors='grey', linewidth=0.5)
+        ax.voxels(~parallelepiped, facecolors=colors_not, edgecolors='grey', linewidth=0.05)
+        ax.view_init(40, 135)
+        plt.show()
+
     def solve_problem(self):
         for h in range(self.min_h, self.max_h):
             # VARIABLES
             self.cells = [[[Bool(f"cell{i}{j}{k}") for k in range(self.n)] for j in range(self.w)] for i in range(h)]
+            print("variables:", self.n * self.w * h)
             print("current h: ", h)
             # SOLVER
             self.solver = Solver()
@@ -81,6 +116,7 @@ class SAT:
             for i in range(h):
                 for j in range(self.w):
                     self.solver.add(self.at_most_one(self.cells[i][j][:]))
+                    # self.solver.add(self.at_least_one(self.cells[i][j][:]))
 
             # C2) CHIPS CONSISTENCY
             # loop over levels
@@ -89,16 +125,27 @@ class SAT:
                 for x in range(self.w - self.chips_w[k] + 1):
                     for y in range(h - self.chips_h[k] + 1):
                         rectangle = []
-                        background = []
                         for i in range(h):  # rows
                             for j in range(self.w):  # cols
                                 if y <= i < y + self.chips_h[k] and x <= j < x + self.chips_w[k]:
                                     rectangle.append(self.cells[i][j][k])
                                 else:
-                                    background.append(Not(self.cells[i][j][k]))
-                        possible_plates.append(And(And(rectangle), And(background)))
+                                    rectangle.append(Not(self.cells[i][j][k]))
+                        possible_plates.append(And(rectangle))
                 self.solver.add(self.at_least_one(possible_plates))
-                self.solver.add(self.at_most_one(possible_plates))
+
+            # C2) CHIPS Z3 friendly
+            '''for k in range(self.n):
+                self.solver.add(Or([
+                    And([If((y <= i < y + self.chips_h[k] and x <= j < x + self.chips_w[k]),
+                            self.cells[i][j][k],
+                            Not(self.cells[i][j][k]))
+                         for j in range(self.w)
+                         for i in range(h)
+                         ])
+                    for y in range(h - self.chips_h[k] + 1)
+                    for x in range(self.w - self.chips_w[k] + 1)
+                ]))'''
 
             # RESOLUTION
             start = timer()
@@ -109,9 +156,11 @@ class SAT:
                 self.display_solution(self.solver.model(), h)
                 return True
             print("FAILURE")
+            ass = self.solver.assertions()
+            print(ass)
         return False
 
 
-problem_number = 3
+problem_number = 2
 ss = SAT(problem_number)
 ss.solve_problem()

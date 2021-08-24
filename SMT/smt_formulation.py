@@ -113,7 +113,7 @@ class SMT:
             time = timer() - start
             if outcome == sat:
                 print("Solving time: " + str(time))
-                # self.display_solution(self.solver.model(), h - 1)
+                self.display_solution(self.solver.model(), h - 1)
                 return time
             print("FAILURE ", h - 1)
         return 241
@@ -122,3 +122,6 @@ def main(problem_number):
     ss = SMT(problem_number)
     solve_time = ss.solve_problem()
     return solve_time
+
+if __name__ == '__main__':
+    main(10)
