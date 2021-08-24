@@ -83,7 +83,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    # gather_times(rotation=False, start_inst=args.Start, end_inst=args.End, save_times=args.Save, verbose=args.Verbose)
+    gather_times(rotation=False, start_inst=args.Start, end_inst=args.End, save_times=args.Save, verbose=args.Verbose)
     gather_times(rotation=True, start_inst=args.Start, end_inst=args.End, save_times=args.Save, verbose=args.Verbose)
 
     if args.Plot:
