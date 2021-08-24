@@ -1,4 +1,4 @@
-# Satisfiability Modulo Theories
+# Satisfiability Modulo Theories Formulation
 
 ### File Contents
 
@@ -29,6 +29,18 @@ following command:
 | -v, --Verbose          | prints execution time                                                                         |
 | -si, --Start           | start instance number                                                                         |
 | -ei, --End             | end instance number                                                                           |
+
+### Input
+The input data is in the format of .dzn files that can be found in the directory 
+```resources```. All .dzn files have been properly preprocessed for efficiency reasons.
+The following column representation shows how the input data is constructed in each .dzn files. 
+
+|     |
+|---|
+|plate_width|
+|num_chips|
+|[chips_w[i] i in 0..num_chips - 1]|
+|[chips_h[i] i in 0..num_chips - 1]|
 
 ### Output
 
