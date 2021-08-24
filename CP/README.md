@@ -18,7 +18,7 @@ In order to reproduce the experiments one can open a terminal in the current wor
 following command:
 
 ```shell
-    python gather_data.py [-h] [-s {True, False}] [-p {True, False}] [-v {True, False}] [-si {int}] [-ei {int}]
+    python src/gather_data.py [-h] [-s {True, False}] [-p {True, False}] [-v {True, False}] [-si {int}] [-ei {int}]
 ```
 
 | arg                    | meaning                                                                                   |
