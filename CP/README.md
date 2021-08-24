@@ -38,7 +38,7 @@ following command:
     ```.txt``` files that will represent solution. Each file in the ```out``` directory follows the pattern below:
 
     |                             |                             |                                  |                                 |
-        |:---------------------------:|:---------------------------:|:-------------------------------:|:-------------------------------:|
+    |:---------------------------:|:---------------------------:|:-------------------------------:|:-------------------------------:|
     |         plate_width         |      final_plate_hight      |                                 |                                 |
     |       num_chips       |                             |                                 |                                 |
     |          chip_w[0]          |          chip_h[0]          |          x_position[0]          |          y_position[0]          |
