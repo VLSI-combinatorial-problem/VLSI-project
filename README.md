@@ -7,6 +7,8 @@ We  have  built  two  models:  one  using  MiniZinc  with  the  standard CP
 theory  while  the  other  one  employes  a  similar  problem  model  expressed  
 in  First Order  Logic  with  new  specific  contraints.   
 A particular implementation in SAT is also available.
+Check the [FULL REPORT](/Full_Report.pdf) for all the details.
+
 
 ## Table of Contents
 
@@ -54,7 +56,7 @@ SMT model performance on 40 VLSI instances:
 </p>     
 
 The SAT model implementation has also an explicative plot 
-that shows the disposition of the chips (for more details on SAT check the [REPORT]):  
+that shows the disposition of the chips (for more details on SAT check the [FULL REPORT](/Full_Report.pdf)):  
 
 <p align='center'>
   <img src="/utils/images/parallelepiped.png" />
