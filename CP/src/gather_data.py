@@ -110,7 +110,7 @@ def plot_times():
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("-si", "--Start", help="Start Instance number", type=int, default=1)
-    parser.add_argument("-ei", "--End", help="End Instance", type=int, default=40)
+    parser.add_argument("-ei", "--End", help="End Instance (included)", type=int, default=40)
     parser.add_argument("-v", "--Verbose", help="Verbose", type=bool, default=False)
     parser.add_argument("-s", "--Save", help="Saves Results", type=bool, default=False)
     parser.add_argument("-p", "--Plot", help="Plot Results", type=bool, default=False)
