@@ -41,8 +41,8 @@ The following column representation shows how the input data is constructed in e
 |---|
 |plate_width|
 |num_chips|
-|[chips_w[i] i in 0..num_chips - 1]|
-|[chips_h[i] i in 0..num_chips - 1]|
+|chips_w[i] i in 0..num_chips - 1|
+|chips_h[i] i in 0..num_chips - 1|
 
 
 ### Output

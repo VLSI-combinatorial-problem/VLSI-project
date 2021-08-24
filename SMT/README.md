@@ -39,8 +39,8 @@ The following column representation shows how the input data is constructed in e
 |---|
 |plate_width|
 |num_chips|
-|[chips_w[i] i in 0..num_chips - 1]|
-|[chips_h[i] i in 0..num_chips - 1]|
+|chips_w[i] i in 0..num_chips - 1|
+|chips_h[i] i in 0..num_chips - 1|
 
 ### Output
 
@@ -52,7 +52,7 @@ The following column representation shows how the input data is constructed in e
     |                             |                             |                                  |                                 |
     |:---------------------------:|:---------------------------:|:-------------------------------:|:-------------------------------:|
     |         plate_width         |      final_plate_hight      |                                 |                                 |
-    |       num_chips       |                             |                                 |                                 |
+    |       num_chips             |                             |                                 |                                 |
     |          chip_w[0]          |          chip_h[0]          |          x_position[0]          |          y_position[0]          |
     |          chip_w[1]          |          chip_h[0]          |          x_position[1]          |          y_position[1]          |
     |             ...             |             ...             |               ...               |               ...               |
