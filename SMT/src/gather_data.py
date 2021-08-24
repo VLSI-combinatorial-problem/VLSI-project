@@ -14,26 +14,30 @@ def gather_times(rotation, start_inst, end_inst, save_times=False, verbose=False
 
     for prob_num in range(start_inst, end_inst + 1):
         if rotation:
-            solve_time, chips_w, chips_h, position_x, position_y, n, w, h, rotations = smt_formulation_rotation.main(
-                prob_num)
+            output_smt = smt_formulation_rotation.main(prob_num)
+            if output_smt is not False:
+                solve_time, chips_w, chips_h, position_x, position_y, n, w, h, rotations = output_smt
         else:
-            solve_time, chips_w, chips_h, position_x, position_y, n, w, h = smt_formulation.main(prob_num)
+            output_smt = smt_formulation.main(prob_num)
+            if output_smt is not False:
+                solve_time, chips_w, chips_h, position_x, position_y, n, w, h = output_smt
         if save_times:
             times[prob_num - 1, 0] = str(int(prob_num))
             times[prob_num - 1, 1] = str(round(solve_time, 3))
             times[prob_num - 1, 2] = 'rotation' if rotation else 'no_rotation'
 
-        with open(f"../SMT/out/out{'_rotation' if rotation else '_no_rotation'}_{prob_num}.txt", 'w') as f:
-            f.writelines(f"{w} {h}\n")
-            f.writelines(f"{n}\n")
-            for i in range(n):
-                if rotation:
-                    f.writelines(f"{chips_w[i]} {chips_h[i]} {position_x[i]} {position_y[i]} "
-                                 f"{'rotated' if rotations[i] else 'not_rotated'}\n")
-                else:
-                    f.writelines(f"{chips_w[i]} {chips_h[i]} {position_x[i]} {position_y[i]}\n")
-        if verbose:
-            print("Solve time: ", round(solve_time, 3))
+        if output_smt is not False:
+            with open(f"../SMT/out/out{'_rotation' if rotation else '_no_rotation'}_{prob_num}.txt", 'w') as f:
+                f.writelines(f"{w} {h}\n")
+                f.writelines(f"{n}\n")
+                for i in range(n):
+                    if rotation:
+                        f.writelines(f"{chips_w[i]} {chips_h[i]} {position_x[i]} {position_y[i]} "
+                                     f"{'rotated' if rotations[i] else 'not_rotated'}\n")
+                    else:
+                        f.writelines(f"{chips_w[i]} {chips_h[i]} {position_x[i]} {position_y[i]}\n")
+            if verbose:
+                print("Solve time: ", round(solve_time, 3))
     if save_times:
         np.savetxt(f"../SMT/out/times{'_rotation' if rotation else '_no_rotation'}.csv", times, fmt="%s", delimiter=',')
 

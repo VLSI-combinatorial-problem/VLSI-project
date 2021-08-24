@@ -124,9 +124,12 @@ class SMT:
 def main(problem_number, ):
     ss = SMT(problem_number)
     solve_time = ss.solve_problem()
-    position_x = [int(ss.solver.model().evaluate(ss.x_positions[i]).as_string()) for i in range(ss.n)]
-    position_y = [int(ss.solver.model().evaluate(ss.y_positions[i]).as_string()) for i in range(ss.n)]
-    return solve_time, ss.chips_w, ss.chips_h, position_x, position_y, ss.n, ss.w, ss.h
+    if solve_time < 301:
+        position_x = [int(ss.solver.model().evaluate(ss.x_positions[i]).as_string()) for i in range(ss.n)]
+        position_y = [int(ss.solver.model().evaluate(ss.y_positions[i]).as_string()) for i in range(ss.n)]
+        return solve_time, ss.chips_w, ss.chips_h, position_x, position_y, ss.n, ss.w, ss.h
+    else:
+        return False
 
 
 if __name__ == '__main__':

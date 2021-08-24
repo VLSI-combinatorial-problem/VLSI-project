@@ -1,0 +1,22 @@
+30 30
+20
+11 30 16 0 not_rotated
+4 8 3 0 not_rotated
+4 6 3 24 not_rotated
+4 4 3 20 rotated
+4 3 13 0 rotated
+4 9 3 8 not_rotated
+3 9 0 21 not_rotated
+3 4 3 17 rotated
+3 5 27 25 not_rotated
+3 6 7 0 not_rotated
+3 7 7 6 not_rotated
+3 8 0 0 not_rotated
+3 13 0 8 not_rotated
+3 10 13 20 not_rotated
+3 11 10 19 not_rotated
+3 14 7 13 not_rotated
+3 16 13 4 not_rotated
+3 19 10 0 not_rotated
+3 25 27 0 not_rotated
+3 3 7 27 rotated
