@@ -2,7 +2,7 @@ import re
 from itertools import combinations
 from timeit import default_timer as timer
 import numpy as np
-from z3 import And, Or, Bool, Solver, Not, sat, Xor, unsat, If, SolverFor
+from z3 import And, Or, Bool, Solver, Not, sat
 import matplotlib.pyplot as plt
 
 
@@ -50,13 +50,6 @@ class SAT:
         print("SUCCESS")
         print("h: " + str(h))
 
-        parallelepiped = np.zeros((self.n, h, self.w), dtype=bool)
-        for i in range(h):
-            for j in range(self.w):
-                for k in range(self.n):
-                    if model[self.cells[i][j][k]]:
-                        parallelepiped[k, j, i] = True
-
         grid = np.zeros((h, self.w))
         for i in range(h):
             for j in range(self.w):
@@ -76,7 +69,16 @@ class SAT:
         plt.tight_layout()
         plt.show()
 
+        '''
+            # 3D plot for the 2nd instance
         from mpl_toolkits.mplot3d import Axes3D
+        
+        parallelepiped = np.zeros((self.n, h, self.w), dtype=bool)
+        for i in range(h):
+            for j in range(self.w):
+                for k in range(self.n):
+                    if model[self.cells[i][j][k]]:
+                        parallelepiped[k, j, i] = True
 
         axes = [parallelepiped.shape[0], parallelepiped.shape[1], parallelepiped.shape[2]]
         alpha = 0.9
@@ -100,7 +102,7 @@ class SAT:
         ax.voxels(parallelepiped, facecolors=colors, edgecolors='grey', linewidth=0.5)
         ax.voxels(~parallelepiped, facecolors=colors_not, edgecolors='grey', linewidth=0.05)
         ax.view_init(40, 135)
-        plt.show()
+        plt.show()'''
 
     def solve_problem(self):
         for h in range(self.min_h, self.max_h):
@@ -160,7 +162,7 @@ class SAT:
             print(ass)
         return False
 
-
-problem_number = 2
-ss = SAT(problem_number)
-ss.solve_problem()
+if __name__ == '__main__':
+    problem_number = 2
+    ss = SAT(problem_number)
+    ss.solve_problem()

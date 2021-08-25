@@ -121,7 +121,7 @@ class SMT:
         return 301
 
 
-def main(problem_number, ):
+def main(problem_number):
     ss = SMT(problem_number)
     solve_time = ss.solve_problem()
     if solve_time < 301:
