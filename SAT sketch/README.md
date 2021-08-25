@@ -1,4 +1,4 @@
-# SAT PROPOSAL
+# SAT PROPOSAL SKETCH
 
 An alternative way of thinking formulated in SAT for the VLSI problem.
 Please check the [FULL REPORT](../Full_Report.pdf) for details.
